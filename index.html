@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-	<title>Simplified Reaction-Diffusion</title>
+	<title>antikythera</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<script src="swissgl.js"></script>
@@ -12,6 +12,9 @@
 		body, html { margin: 0; padding: 0; overflow: hidden; }
 		#canvas { width: 100vw; height: 100vh; }
 
+		.test {
+			color: rgb(235, 254, 83)
+		}
 		/* Controls */
 		.controls * {
 			margin: 0;
@@ -34,6 +37,17 @@
 			font-size: 13px;
 			color: white;
 			border-radius: 6.75px;
+			max-height: calc(100dvh - 54px);
+			box-sizing: border-box;
+			overflow-y: scroll;
+		}
+		.controls-main {
+			display: flex;
+			flex-direction: column;
+			gap: 18px;
+		}
+		.controls[data-active="0"] .controls-main {
+			display: none;
 		}
 		.control {
 			display: flex;
@@ -89,6 +103,26 @@
 		.input-button:active, .controls a:active {
 			opacity: .25;
 		}
+		.input-color {
+			-webkit-appearance: none;
+			border: none;
+			flex-grow: 1;
+			border-radius: 2px;
+			height: 1.28em;
+			cursor: pointer;
+		}
+		.input-color::-webkit-color-swatch-wrapper {
+			padding: 0;
+		}
+		.input-color::-webkit-color-swatch {
+			border: none;
+		}
+		.input-color:hover {
+			opacity: .5;
+		}
+		.input-color:active {
+			opacity: .25;
+		}
 		.input-range {
 			-webkit-appearance: none;
 			flex-grow: 1;
@@ -118,133 +152,168 @@
 
 	<!-- https://whatisintelligence.antikythera.org/ -->
 
-	<div class="controls">
-		<a href="https://whatisintelligence.antikythera.org/" target="_blank">antikythera</a>
+	<div class="controls" data-active="1">
 		<div class="control">
 			<div class="input-label-container">
-				<label class="input-label">Time Steps (Speed)</label>
-				<div class="input-value" id="time-steps-value">1</div>
-			</div>
-			<div class="input-container">
-				<div class="input-cap">1</div>
-				<input type="range" min="1" max="10" value="1" oninput="updateTimeSteps(this.value)" class="input-range">
-				<div class="input-cap">10</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Preblur Steps (Initial Phase)</label>
-				<div class="input-value" id="preblur-steps-value">1</div>
-			</div>
-			<div class="input-container">
-				<div class="input-cap">1</div>
-				<input type="range" min="1" max="10" value="1" oninput="updatePreblurSteps(this.value)" class="input-range">
-				<div class="input-cap">10</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Steepness (Blur)</label>
-				<div class="input-value" id="steepness-value">1000</div>
-			</div>
-			<div class="input-container">
-				<div class="input-cap">2</div>
-				<input type="range" min="2" max="1000" value="1000" oninput="updateSteepness(this.value)" class="input-range">
-				<div class="input-cap">1000</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Sigmoid Center</label>
-				<div class="input-value">0.<span id="sigmoid-center-value">40</span></div>
-			</div>
-			<div class="input-container">
-				<div class="input-cap">0.20</div>
-				<input type="range" min="20" max="60" value="40" oninput="updateSigmoidCenter(this.value)" class="input-range">
-				<div class="input-cap">0.60</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Original Dimensions*<br><em style="opacity: .5;">*Resets Animation</em></label>
-				<div class="input-value" id="original-dimensions-value">512</div>
-			</div>
-			<div class=input-container>
-				<div class="input-cap">50</div>
-				<input type="range" min="50" max="2000" value="512" oninput="updateOriginalDimensions(this.value);" class="input-range">
-				<div class="input-cap">2000</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Cropped Dimensions<br>(Magnification)</label>
-				<div class="input-value" id="cropped-dimensions-value">256</div>
-			</div>
-			<div class=input-container>
-				<div class="input-cap">50</div>
-				<input type="range" min="50" max="2000" value="256" oninput="updateCroppedDimensions(this.value);" class="input-range">
-				<div class="input-cap">2000</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Upscaled Dimensions<br>(Resolution)</label>
-				<div class="input-value" id="upscaled-dimensions-value">1000</div>
-			</div>
-			<div class=input-container>
-				<div class="input-cap">50</div>
-				<input type="range" min="50" max="2000" value="1000" oninput="updateUpscaledDimensions(this.value);" class="input-range">
-				<div class="input-cap">2000</div>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Filter</label>
-				<div class="input-value" id="filter-value">Linear</div>
-			</div>
-			<div class=input-container-buttons>
-				<button class="input-button" onclick="updateFilter('linear');">Linear (Smooth)</button>
-				<button class="input-button" onclick="updateFilter('nearest');">Nearest (Pixelated)</button>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class="input-label-container">
-				<label class="input-label">Shader</label>
-				<div class="input-value" id="shader-value">Colormapped</div>
-			</div>
-			<div class=input-container-buttons>
-				<button class="input-button" onclick="updateShader('original');">Original</button>
-				<button class="input-button" onclick="updateShader('cropped');">Cropped</button>
-				<button class="input-button" onclick="updateShader('upscaled');">Upscaled</button>
-				<button class="input-button" onclick="updateShader('colormapped');">Colormapped</button>
-			</div>
-		</div>
-		
-		<div class="control">
-			<div class=input-container-buttons>
-				<button class="input-button" onclick="downloadCanvas();">Download Image</button>
-				<button class="input-button" onclick="reset();">Restart</button>
+				<a href="https://whatisintelligence.antikythera.org/" target="_blank" class="input-label">antikythera</a>
+				<button class="input-button" onclick="toggleControls();">Hide/Show</button>
 			</div>
 		</div>
 
-		<!-- <div class="">
-			<label>Presets</label>
-			<button onclick="changeGeneration('cell division')">cell division</button>
-			<button onclick="changeGeneration('cow')">cow</button>
-			<button onclick="changeGeneration('eggs')">eggs</button>
-			<button onclick="changeGeneration('quickening')">quickening</button>
-			<button onclick="changeGeneration('slow eggs')">slow eggs</button>
-			<button onclick="changeGeneration('turing')">turing</button>
-			<button onclick="changeGeneration('vibroeggs')">vibroeggs</button>
-		</div> -->
+		<div class="controls-main">
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Skip First Steps*<br><em style="opacity: .5">*Resets Animation</em></label>
+					<div class="input-value" id="skip-iterations-value">0</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="2000" value="0" onchange="updateSkipIterations(this.value)" class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Time Steps<br>(Speed)</label>
+					<div class="input-value" id="time-steps-value">1</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="10" value="1" oninput="updateTimeSteps(this.value)" class="input-range">
+					<div class="input-cap">10</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Preblur Steps<br>(Negative Space)</label>
+					<div class="input-value" id="preblur-steps-value">1</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="10" value="1" oninput="updatePreblurSteps(this.value)" class="input-range">
+					<div class="input-cap">10</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Original Dimensions*<br><em style="opacity: .5;">*Resets Animation</em></label>
+					<div class="input-value" id="original-dimensions-value">512</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="512" oninput="updateOriginalDimensions(this.value);" class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Cropped Dimensions<br>(Magnification)</label>
+					<div class="input-value" id="cropped-dimensions-value">256</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="256" oninput="updateCroppedDimensions(this.value);" class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Upscaled Dimensions<br>(Final Resolution)</label>
+					<div class="input-value" id="upscaled-dimensions-value">1000</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="1000" oninput="updateUpscaledDimensions(this.value);" class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Colors</label>
+				</div>
+				<div class=input-container-buttons>
+					<input type="color" value="#E6FF00" class="input-color" oninput="updateColor1(this.value)">
+					<input type="color" value="#3F4210" class="input-color" oninput="updateColor2(this.value)">
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Steepness<br>(Color Threshold Blur)</label>
+					<div class="input-value" id="steepness-value">1000</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">2</div>
+					<input type="range" min="2" max="2000" value="1000" oninput="updateSteepness(this.value)" class="input-range">
+					<div class="input-cap">1000</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Sigmoid Center<br>(Color Threhold Offset)</label>
+					<div class="input-value">0.<span id="sigmoid-center-value">40</span></div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0.20</div>
+					<input type="range" min="20" max="60" value="40" oninput="updateSigmoidCenter(this.value)" class="input-range">
+					<div class="input-cap">0.60</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Filter</label>
+					<div class="input-value" id="filter-value">linear</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateFilter('linear');">Linear (Smooth)</button>
+					<button class="input-button" onclick="updateFilter('nearest');">Nearest (Pixelated)</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Presets</label>
+					<div class="input-value" id="preset-value">turing</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updatePreset('cell division')">Cell Division</button>
+					<button class="input-button" onclick="updatePreset('cow')">Cow</button>
+					<button class="input-button" onclick="updatePreset('eggs')">Eggs</button>
+					<button class="input-button" onclick="updatePreset('quickening')">Quickening</button>
+					<button class="input-button" onclick="updatePreset('slow eggs')">Slow Eggs</button>
+					<button class="input-button" onclick="updatePreset('turing')">Turing</button>
+					<button class="input-button" onclick="updatePreset('vibroeggs')">Vibroeggs</button>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Shader</label>
+					<div class="input-value" id="shader-value">colormapped</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateShader('original');">Original</button>
+					<button class="input-button" onclick="updateShader('cropped');">Cropped</button>
+					<button class="input-button" onclick="updateShader('upscaled');">Upscaled</button>
+					<button class="input-button" onclick="updateShader('colormapped');">Colormapped (Final Output)</button>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="downloadCanvas();">Download Image</button>
+					<button class="input-button" onclick="reset();">Regenerate</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<canvas id="canvas"></canvas>
@@ -255,6 +324,7 @@
 		const glsl = SwissGL(canvas);
 
 		// Controls
+		let skipIterations = 0;
 		let timeSteps = 1;
 		let preblurSteps = 4;
 		let steepness = 1000;
@@ -262,8 +332,23 @@
 		let originalDimensions = 512;
 		let croppedDimensions = 256;
 		let upscaledDimensions = 1000;
-		let filterType = 'nearest';
+		let filterType = 'linear';
 		let shader = 'colormapped';
+		let preset = 'turing';
+		function toggleControls() {
+			const controls = document.querySelector('.controls');
+			if (controls.dataset.active == 1) {
+				controls.dataset.active = 0;
+			} else {
+				controls.dataset.active = 1;
+			}
+		}
+		function updateSkipIterations(newValue) {
+			skipIterations = newValue;
+			const valueLabel = document.querySelector('#skip-iterations-value');
+			valueLabel.innerText = skipIterations;
+			reset();
+		}
 		function updateTimeSteps(newValue) {
 			timeSteps = newValue;
 			const valueLabel = document.querySelector('#time-steps-value');
@@ -303,69 +388,72 @@
 		function updateFilter(newValue) {
 			filterType = newValue;
 			const valueLabel = document.querySelector('#filter-value');
-			const capitalized = String(filterType).charAt(0).toUpperCase() + String(filterType).slice(1);
-			valueLabel.innerText = capitalized;
+			valueLabel.innerText = filterType;
 		}
 		function updateShader(newValue) {
 			shader = newValue;
 			const valueLabel = document.querySelector('#shader-value');
-			const capitalized = String(shader).charAt(0).toUpperCase() + String(shader).slice(1);
-			valueLabel.innerText = capitalized;
+			valueLabel.innerText = shader;
 		}
-		function downloadCanvas() {  // Convert canvas to a data URL
-			const canvas = document.getElementById('canvas');
-			const image = canvas.toDataURL('image/png');
-			// Create a temporary link element
-			const link = document.createElement('a');
-			link.href = image;
-			link.download = `image${1}.png`;
-			// Trigger the download
-			link.click();
+		function updatePreset(newValue) {
+			preset = newValue;
+			const valueLabel = document.querySelector('#preset-value');
+			valueLabel.innerText = preset;
 		}
+		function downloadCanvas() {
+			requestAnimationFrame(() => {
+				// Capture the image after the next frame
+				const imageUrl = canvas.toDataURL('image/png'); // Capture image data
 
-		let generationPattern = "turing";
-		let regen = false;
-		function changeGeneration(newPattern) {
-			generationPattern = newPattern
-			regen = true;
-		}
-	
-		let randomSeed;
-		let state;
-		function reset() {
-			randomSeed = Math.random()*123243;
+				// Create an anchor element to download the image
+				const link = document.createElement('a');
+				link.href = imageUrl;
+				link.download = 'antikythera.png';
 
-			state = glsl({
-				seed: randomSeed,
-				// Fragment Processor (actual GLSL code)
-				FP: `
-					// 1.0 is red channel set to 1
-					// exp(-400.0*dot(XY, XY)) computes an exponential falloff based on the distance from a center point
-					// hash(I.xyx + int(seed)).x is generating a random value based on the input I (likely pixel coordinates) and a seed value
-
-					1.0,
-					exp(-400.0*dot(XY,XY))*hash(I.xyx+int(seed)).x,
-					0,
-					0
-				`
-			}, {
-				size: [originalDimensions, originalDimensions],
-				format: 'rgba16f', // RGBA 16bit floating point format
-				filter: filterType, // Linear filtering averages neighboring pixels for smooth result (used for scaling image), nearest filtering is pixelated
-				story: 2,
-				tag: 'state' // For reference later on
+				// Trigger the download
+				link.click();
 			});
-			state[0].filter = filterType;
-			state[1].filter = filterType;
 		}
-		reset();
-	
-		glsl.loop(() => { 
+
+		// Hex code to RGB percentage (0.0-1.0)
+		let color1Hex = "#E6FF00";
+		let color1RGB = [0.0, 0.0, 0.0];
+		let color2Hex = "#3F4210";
+		let color2RGB = [1.0, 1.0, 1.0];
+		function updateColor1(newValue) {
+			color1Hex = newValue;
+			hexToRgbPercent();
+		}
+		function updateColor2(newValue) {
+			color2Hex = newValue;
+			hexToRgbPercent();
+		}
+		function hexToRgbPercent() {
+			// Remove hashtag
+			let hex1 = color1Hex.replace(/^#/, '');
+			let hex2 = color2Hex.replace(/^#/, '');
+
+			// Parse the hex code into its RGB components
+			let r1 = parseInt(hex1.substring(0, 2), 16);
+			let g1 = parseInt(hex1.substring(2, 4), 16);
+			let b1 = parseInt(hex1.substring(4, 6), 16);
+			let r2 = parseInt(hex2.substring(0, 2), 16);
+			let g2 = parseInt(hex2.substring(2, 4), 16);
+			let b2 = parseInt(hex2.substring(4, 6), 16);
+
+			// Convert each component to a percentage (0.0 to 1.0)
+			color1RGB = [r1 / 255, g1 / 255, b1 / 255];
+			color2RGB = [r2 / 255, g2 / 255, b2 / 255];
+		}
+		hexToRgbPercent();
+
+		// All shader code
+		function runShader() {
 			glsl.adjustCanvas();
 
 			// Get correct generation pattern
 			let generationPatternCode = "";
-			switch (generationPattern) {
+			switch (preset) {
 				case "cell division":
 					generationPatternCode = `
 						const float k = 0.053 * 1.0;
@@ -434,12 +522,7 @@
 					`;
 					break
 			}
-			if (regen) {
-				reset();
-				regen = false;
-				return
-			}
-	
+
 			for (let j=0; j<timeSteps; ++j) { // Time steps (controls speed)
 
 				// Preblur
@@ -497,7 +580,7 @@
 				`}, state);
 
 				// Introducing randomness based on seed value
-	
+
 				glsl({seed: randomSeed, FP: `
 
 					// Fetch the pixel as a vector (x and y position)
@@ -518,13 +601,13 @@
 					// Constants that add specific amounts of adjustment
 					// k is randomness
 					// f is noise generation
-	
+
 					// hash() generates a pseudo-random number
 					// s is a smooth step based on difference from the center
 					// m is small perturbation added to the result
 
 					${generationPatternCode}
-	
+
 					// Original value v is modified by random offset r
 					// Then this is outputed using the constants f and k
 
@@ -558,7 +641,7 @@
 				});
 			crop[0].filter = filterType;
 			crop[1].filter = filterType;
-	
+
 			// Increases resolution of cropped area
 			const upres = glsl({
 					// crop[0] is the returned image data of cropped region from prev glsl shader
@@ -578,7 +661,7 @@
 				});
 			upres[0].filter = filterType;
 			upres[1].filter = filterType;
-	
+
 			// Color mapping and rendering as before
 			const colormapped = glsl({
 					// upres[0] is the returned image data of cropped region from prev glsl shader
@@ -607,8 +690,8 @@
 						// Opposite for when w is close to 1
 
 						FOut.rgb = mix(
-								vec3(0.01, 0.01, 0.01),
-								vec3(.5, .5, 0.9),
+								vec3(${color1RGB[0]}, ${color1RGB[1]}, ${color1RGB[2]}),
+								vec3(${color2RGB[0]}, ${color2RGB[1]}, ${color2RGB[2]}),
 								w
 							);
 					`
@@ -628,20 +711,54 @@
 			} else if (shader == 'colormapped') {
 				activeShader = colormapped;
 			}
-			
+
 			glsl({ 
-				tex: activeShader, // Image to be processed
+				tex: activeShader,
 				Aspect: 'cover',
-				// tex fetches pixel color
-				// UV maps pixels from range (0,0) to (1,1) i.e. top-left to bottom-right
-				// .y is the green channel (rgb = xyz)
-				// sqrt adjusts the intensity of the channel
-				// This makes lower intensity pixels (near 0) brighter and higher intensity pixels (near 1) darker
 				FP: `
-					tex(UV).x
+					tex(UV)
 				`
 			});
-		});
+		}
+
+		// Initialize shader
+		let randomSeed;
+		let state;
+		function reset() {
+			randomSeed = Math.random()*123243;
+
+			state = glsl({
+				seed: randomSeed,
+				// Fragment Processor (actual GLSL code)
+				FP: `
+					// 1.0 is red channel set to 1
+					// exp(-400.0*dot(XY, XY)) computes an exponential falloff based on the distance from a center point
+					// hash(I.xyx + int(seed)).x is generating a random value based on the input I (likely pixel coordinates) and a seed value
+
+					1.0,
+					exp(-400.0*dot(XY,XY))*hash(I.xyx+int(seed)).x,
+					0,
+					0
+				`
+			}, {
+				size: [originalDimensions, originalDimensions],
+				format: 'rgba16f', // RGBA 16bit floating point format
+				filter: filterType, // Linear filtering averages neighboring pixels for smooth result (used for scaling image), nearest filtering is pixelated
+				story: 2,
+				tag: 'state' // For reference later on
+			});
+			state[0].filter = filterType;
+			state[1].filter = filterType;
+
+			// Set the condition to start the loop from the specified iteration
+			for (let i=0; i < skipIterations; i++) {
+				runShader();
+			}
+		}
+		reset();
+
+		// Main loop
+		glsl.loop(runShader);
 	</script>
 	
 </body>
