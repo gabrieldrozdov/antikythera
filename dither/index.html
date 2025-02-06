@@ -130,11 +130,25 @@
 					<button class="input-button" onclick="updateBlendMode('plus-lighter');">Plus Lighter</button>
 				</div>
 			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Recording Length (seconds)</label>
+					<div class="input-value" id="recording-length-value">5</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="30" value="5" oninput="updateRecordingLength(this.value)" class="input-range">
+					<div class="input-cap">30</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="makeRecording();" id="record-gif">Record GIF</button>
+				</div>
+			</div>
 			
 			<div class="control">
 				<div class=input-container-buttons>
 					<button class="input-button" onclick="saveCanvas('dither.png');">Download Image</button>
-					<button class="input-button" onclick="makeRecording();">Save 5s .gif</button>
 					<button class="input-button" id="regenerate" onclick="pausePlay();">Pause/Play</button>
 				</div>
 			</div>

@@ -230,6 +230,12 @@ function pausePlay() {
 }
 
 // Safe as gif
+let recordingLength = 5;
+function updateRecordingLength(newValue) {
+	recordingLength = parseInt(newValue);
+	const valueLabel = document.querySelector('#recording-length-value');
+	valueLabel.innerText = recordingLength;
+}
 function makeRecording() {
-	saveGif('dither', 5, { notificationDuration: 1 });
+	saveGif('dither', recordingLength, { notificationDuration: 1 });
 }
