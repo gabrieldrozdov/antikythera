@@ -1,0 +1,79 @@
+@font-face {
+	font-family: 'ESAllianz-Book';
+	src: url('ESAllianz-Book.woff2');
+}
+body {
+	color: black;
+	background-color: #e7e7e7;
+}
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'ESAllianz-Book', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+	line-height: 1.28em;
+	font-size: 13px;
+	text-align: center;
+	image-rendering: pixelated;
+}
+.container {
+	width: 100vw;
+	height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	flex-direction: column;
+	align-items: center;
+	padding: 1vmin;
+	gap: 1vmin;
+}
+.title {
+	font-weight: normal;
+}
+.title a {
+	color: black;
+}
+.title a:hover {
+	opacity: .5;
+}
+.title a:active {
+	opacity: .25;
+}
+.nav {
+	width: 100%;
+	flex-grow: 1;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1vmin;
+}
+.nav-link {
+	border-radius: 6.75px;
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	flex-direction: column;
+	background-color: white;
+	color: black;
+	padding: 1vmin;
+	gap: 1vmin;
+	background-size: cover;
+	background-position: center;
+}
+.nav-link span {
+	background-color: white;
+	padding: 9px 18px;
+	border-radius: 6.75px;
+	color: black;
+}
+.nav-link:hover {
+	background-color: black;
+	color: white;
+}
+.nav-link:hover span {
+	background-color: black;
+	color: white;
+}
+@media only screen and (max-width: 600px) {
+	.nav {
+		grid-template-columns: 1fr;
+	}
+}

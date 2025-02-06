@@ -1,0 +1,143 @@
+@font-face {
+	font-family: 'ESAllianz-Book';
+	src: url('../ESAllianz-Book.woff2');
+}
+body, html { margin: 0; padding: 0; overflow: hidden; }
+#dither {
+	width: 100vw !important;
+	height: 100vh !important;
+	image-rendering: pixelated;
+}
+
+/* Controls */
+.controls * {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'ESAllianz-Book', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+	line-height: 1.28em;
+	font-size: 13px;
+}
+.controls {
+	position: absolute;
+	top: 27px;
+	left: 27px;
+	width: 240px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	background-color: black;
+	padding: 18px;
+	font-family: sans-serif;
+	color: white;
+	border-radius: 6.75px;
+	max-height: calc(100dvh - 54px);
+	box-sizing: border-box;
+	overflow-y: scroll;
+}
+.controls-main {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+.controls[data-active="0"] {
+	display: none;
+}
+.control {
+	display: flex;
+	flex-direction: column;
+	gap: 4.5px;
+}
+.input-label-container {
+	display: flex;
+	gap: 4.5px;
+}
+.input-label {
+	flex-grow: 1;
+}
+.input-value {
+	opacity: .5;
+}
+.input-container {
+	display: flex;
+	align-items: center;
+	gap: 4.5px;
+}
+.input-container-buttons {
+	display: flex;
+	gap: 4.5px;
+	flex-wrap: wrap;
+}
+.input-cap {
+	opacity: .5;
+	border-radius: 10px;
+	font-size: 10px;
+	padding-right: .02em;
+	line-height: 1.28em;
+}
+.input-range {
+	flex-grow: 1;
+}
+.input-button, .controls a {
+	border: unset;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+	color: white;
+	background-color: unset;
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 1em;
+	cursor: pointer;
+	border-radius: 2px;
+	text-align: left;
+}
+.input-button:hover, .controls a:hover {
+	opacity: .5;
+}
+.input-button:active, .controls a:active {
+	opacity: .25;
+}
+.input-color {
+	-webkit-appearance: none;
+	border: .5px solid rgba(0,0,0,.5);
+	flex-grow: 1;
+	border-radius: 2px;
+	height: 1.28em;
+	cursor: pointer;
+}
+.input-color::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+.input-color::-webkit-color-swatch {
+	border: none;
+}
+.input-color:hover {
+	opacity: .5;
+}
+.input-color:active {
+	opacity: .25;
+}
+.input-range {
+	-webkit-appearance: none;
+	flex-grow: 1;
+	height: 1px;
+	background: white;
+	outline: none;
+	cursor: pointer;
+	border-radius: 2px;
+}
+.input-range::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 10px;
+	height: 10px;
+	background: white;
+	border-radius: 2px;
+}
+.input-range::-moz-range-thumb {
+	width: 10px;
+	height: 10px;
+	background: white;
+	border-radius: 2px;
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>Turing Pattern</title>
+	<link rel="icon" type="png" href="favicon.png">
+	<link rel="stylesheet" href="style.css">
+	<script src="swissgl.js"></script>
+</head>
+
+<body>
+	<div class="controls" data-active="1">
+		<div class="control">
+			<div class=input-container-buttons>
+				<a href="/" class="input-label">← Home</a>
+				<button class="input-button" onclick="toggleControls();">Minimize</button>
+			</div>
+		</div>
+
+		<div class="control">
+			<div class="input-label-container">
+				<h1 class="input-label">
+					<a href="https://en.wikipedia.org/wiki/Turing_pattern" target="_blank">Turing Pattern</a>
+				</h1>
+			</div>
+		</div>
+
+		<div class="controls-main">
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Skip First Steps*<br><em style="opacity: .5">*Resets
+							Animation</em></label>
+					<div class="input-value" id="skip-iterations-value">0</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="2000" value="0" onchange="updateSkipIterations(this.value)"
+						class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Time Steps<br>(Speed)</label>
+					<div class="input-value" id="time-steps-value">1</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="10" value="1" oninput="updateTimeSteps(this.value)"
+						class="input-range">
+					<div class="input-cap">10</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Preblur Steps<br>(Negative Space)</label>
+					<div class="input-value" id="preblur-steps-value">1</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="10" value="1" oninput="updatePreblurSteps(this.value)"
+						class="input-range">
+					<div class="input-cap">10</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Original Dimensions*<br><em style="opacity: .5;">*Resets
+							Animation</em></label>
+					<div class="input-value" id="original-dimensions-value">512</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="512" onchange="updateOriginalDimensions(this.value);"
+						class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Cropped Dimensions<br>(Magnification)</label>
+					<div class="input-value" id="cropped-dimensions-value">256</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="256" oninput="updateCroppedDimensions(this.value);"
+						class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Upscaled Dimensions<br>(Final Resolution)</label>
+					<div class="input-value" id="upscaled-dimensions-value">1000</div>
+				</div>
+				<div class=input-container>
+					<div class="input-cap">50</div>
+					<input type="range" min="50" max="2000" value="1000" oninput="updateUpscaledDimensions(this.value);"
+						class="input-range">
+					<div class="input-cap">2000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Colors</label>
+				</div>
+				<div class=input-container-buttons>
+					<input type="color" value="#E6FF00" class="input-color" oninput="updateColor1(this.value)"
+						id="color1">
+					<input type="color" value="#3F4210" class="input-color" oninput="updateColor2(this.value)"
+						id="color2">
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="randomizeColors();" id="randomize-colors">Randomize</button>
+					<button class="input-button" id="swap-colors" onclick="swapColors();">Swap</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Steepness<br>(Color Threshold Blur)</label>
+					<div class="input-value" id="steepness-value">1000</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">2</div>
+					<input type="range" min="2" max="2000" value="1000" oninput="updateSteepness(this.value)"
+						class="input-range">
+					<div class="input-cap">1000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Sigmoid Center<br>(Color Threshold Offset)</label>
+					<div class="input-value">0.<span id="sigmoid-center-value">40</span></div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0.20</div>
+					<input type="range" min="20" max="60" value="40" oninput="updateSigmoidCenter(this.value)"
+						class="input-range">
+					<div class="input-cap">0.60</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Filter</label>
+					<div class="input-value" id="filter-value">linear</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateFilter('linear');">Linear (Smooth)</button>
+					<button class="input-button" onclick="updateFilter('nearest');">Nearest (Pixelated)</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Algorithm Presets</label>
+					<div class="input-value" id="preset-value">turing</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updatePreset('cell division')">Cell Division</button>
+					<button class="input-button" onclick="updatePreset('cow')">Cow</button>
+					<button class="input-button" onclick="updatePreset('eggs')">Eggs</button>
+					<button class="input-button" onclick="updatePreset('quickening')">Quickening</button>
+					<button class="input-button" onclick="updatePreset('slow eggs')">Slow Eggs</button>
+					<button class="input-button" onclick="updatePreset('turing')">Turing</button>
+					<button class="input-button" onclick="updatePreset('vibroeggs')">Vibroeggs</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Shader</label>
+					<div class="input-value" id="shader-value">colormapped</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateShader('original');">Original</button>
+					<button class="input-button" onclick="updateShader('cropped');">Cropped</button>
+					<button class="input-button" onclick="updateShader('upscaled');">Upscaled</button>
+					<button class="input-button" onclick="updateShader('colormapped');">Colormapped (Final
+						Output)</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="downloadCanvas();">Download Image</button>
+					<button class="input-button" onclick="reset();">Regenerate</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<canvas id="canvas" onclick="showControls();"></canvas>
+
+	<script src="script.js"></script>
+
+</body>
+
+</html>

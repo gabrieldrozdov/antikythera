@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dither</title>
+	<link rel="icon" type="png" href="favicon.png">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+</head>
+
+<body>
+	<div class="controls" data-active="1">
+		<div class="control">
+			<div class=input-container-buttons>
+				<a href="/" class="input-label">← Home</a>
+				<button class="input-button" onclick="toggleControls();">Minimize</button>
+			</div>
+		</div>
+
+		<div class="control">
+			<div class="input-label-container">
+				<h1 class="input-label"><a href="https://en.wikipedia.org/wiki/Dither" target="_blank">Dither</a></h1>
+			</div>
+		</div>
+
+		<div class="controls-main">
+			<div class="control">
+				<input type="file" id="file" accept="image/*,video/*">
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Frame Rate</label>
+					<div class="input-value" id="frame-rate-value">20</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="60" value="20" oninput="updateFrameRate(this.value)" class="input-range">
+					<div class="input-cap">60</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Scale</label>
+					<div class="input-value" id="scale-value">20</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="100" value="20" oninput="updateScale(this.value)" class="input-range">
+					<div class="input-cap">100</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Threshold</label>
+					<div class="input-value" id="threshold-value">200</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">10</div>
+					<input type="range" min="1" max="1000" value="200" oninput="updateThreshold(this.value)" class="input-range">
+					<div class="input-cap">1000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Percent Animated</label>
+					<div class="input-value" id="percent-animated-value">50</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="100" value="50" oninput="updatePercentAnimated(this.value)" class="input-range">
+					<div class="input-cap">100</div>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Colors</label>
+				</div>
+				<div class=input-container-buttons>
+					<input type="color" value="#bdafa3" class="input-color" oninput="updateColor1(this.value)" id="color1">
+					<input type="color" value="#1a1a1a" class="input-color" oninput="updateColor2(this.value)" id="color2">
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="randomizeColors();" id="randomize-colors">Randomize</button>
+					<button class="input-button" id="swap-colors" onclick="swapColors();">Swap</button>
+				</div>
+			</div>
+			
+			<div class="control">
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="saveCanvas('dither.png');">Download Image</button>
+					<button class="input-button" onclick="makeRecording();">Save 5s .gif</button>
+					<button class="input-button" id="regenerate" onclick="pausePlay();">Pause/Play</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script src="script.js"></script>
+</body>
+
+</html>
