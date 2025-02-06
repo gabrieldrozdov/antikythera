@@ -91,6 +91,45 @@
 					<button class="input-button" id="swap-colors" onclick="swapColors();">Swap</button>
 				</div>
 			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Opacity</label>
+					<div class="input-value" id="opacity-value">100</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="100" value="100" oninput="updateOpacity(this.value)" class="input-range">
+					<div class="input-cap">100</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Blend Mode</label>
+					<div class="input-value" id="blend-mode-value">normal</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateBlendMode('normal');">Normal</button>
+					<button class="input-button" onclick="updateBlendMode('multiply');">Multiply</button>
+					<button class="input-button" onclick="updateBlendMode('screen');">Screen</button>
+					<button class="input-button" onclick="updateBlendMode('overlay');">Overlay</button>
+					<button class="input-button" onclick="updateBlendMode('darken');">Darken</button>
+					<button class="input-button" onclick="updateBlendMode('lighten');">Lighten</button>
+					<button class="input-button" onclick="updateBlendMode('color-dodge');">Color Dodge</button>
+					<button class="input-button" onclick="updateBlendMode('color-burn');">Color Burn</button>
+					<button class="input-button" onclick="updateBlendMode('hard-light');">Hard Light</button>
+					<button class="input-button" onclick="updateBlendMode('soft-light');">Soft Light</button>
+					<button class="input-button" onclick="updateBlendMode('difference');">Difference</button>
+					<button class="input-button" onclick="updateBlendMode('exclusion');">Exclusion</button>
+					<button class="input-button" onclick="updateBlendMode('hue');">Hue</button>
+					<button class="input-button" onclick="updateBlendMode('saturation');">Saturation</button>
+					<button class="input-button" onclick="updateBlendMode('color');">Color</button>
+					<button class="input-button" onclick="updateBlendMode('luminosity');">Luminosity</button>
+					<button class="input-button" onclick="updateBlendMode('plus-darker');">Plus Darker</button>
+					<button class="input-button" onclick="updateBlendMode('plus-lighter');">Plus Lighter</button>
+				</div>
+			</div>
 			
 			<div class="control">
 				<div class=input-container-buttons>
@@ -100,8 +139,11 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
+
+	<main id="canvas-container">
+		<div id="canvas-media"></div>
+	</main>
 
 	<script src="script.js"></script>
 </body>

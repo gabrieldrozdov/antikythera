@@ -4,9 +4,40 @@
 }
 body, html { margin: 0; padding: 0; overflow: hidden; }
 #dither {
-	width: 100vw !important;
-	height: 100vh !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	width: 100% !important;
+	height: 100% !important;
 	image-rendering: pixelated;
+}
+#canvas-container {
+	width: 100vw;
+	height: 100dvh;
+	position: relative;
+	z-index: 1;
+}
+#canvas-media {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+	width: 100% !important;
+	height: 100% !important;
+	image-rendering: pixelated;
+	object-fit: fill;
+	background-size: 100% 100%;
+	background-position: center;
+}
+#canvas-media video {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: fill;
 }
 
 /* Controls */
@@ -34,6 +65,7 @@ body, html { margin: 0; padding: 0; overflow: hidden; }
 	max-height: calc(100dvh - 54px);
 	box-sizing: border-box;
 	overflow-y: scroll;
+	z-index: 2;
 }
 .controls-main {
 	display: flex;

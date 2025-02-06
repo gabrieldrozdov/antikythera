@@ -50,6 +50,15 @@ function updatePercentAnimated(newValue) {
 	valueLabel.innerText = newValue;
 }
 
+// Opacity of p5.js canvas
+let canvasOpacity = 100;
+function updateOpacity(newValue) {
+	canvasOpacity = parseInt(newValue);
+	const valueLabel = document.querySelector('#opacity-value');
+	valueLabel.innerText = newValue;
+	canvas.canvas.style.opacity = canvasOpacity/100;
+}
+
 // Convert hex to rgb values
 function hexToRgb(hex) {
 	const bigint = parseInt(hex.slice(1), 16);
@@ -109,6 +118,15 @@ function swapColors() {
 	updateColor2(rgbToHex(color2));
 }
 
+// Blend modes
+let blendMode = 'normal';
+function updateBlendMode(newValue) {
+	blendMode = newValue;
+	const valueLabel = document.querySelector('#blend-mode-value');
+	valueLabel.innerText = blendMode;
+	canvas.canvas.style.mixBlendMode = blendMode;
+}
+
 // Initialize canvas
 let canvas;
 let img = null;
@@ -117,13 +135,12 @@ let isVideo = false;
 function setup() {
 	canvas = createCanvas();
 	canvas.id('dither');
+	canvas.parent('canvas-container');
 	frameRate(fps);
-	loadImage('genart-image-compressed.jpg', (loadedImage) => {
-		img = loadedImage;
-	});
+	img = loadImage('genart-image-compressed.jpg');
 	resizeCanvas((windowWidth/100)*scale, (windowHeight/100)*scale);
-
-
+	let canvasMedia = document.querySelector('#canvas-media');
+	canvasMedia.style.backgroundImage = `url(genart-image-compressed.jpg)`;
 	document.querySelector('#dither').addEventListener('click', () => {showControls()});
 }
 
@@ -180,20 +197,22 @@ document.getElementById('file').addEventListener('change', (event) => {
 
 	const url = URL.createObjectURL(file);
 
+	img = null; // Reset img to avoid conflicts
+	if (video) video.remove(); // Remove previous video element if it exists
+
 	if (file.type.startsWith('image')) {
 		isVideo = false;
-		img = null; // Reset img to avoid conflicts
-		loadImage(url, (loadedImage) => {
-			img = loadedImage;
+		img = loadImage(url, () => {
+			let canvasMedia = document.querySelector('#canvas-media');
+			canvasMedia.style.backgroundImage = `url(${url})`;
 			redraw();
 		});
 	} else if (file.type.startsWith('video')) {
 		isVideo = true;
-		if (video) video.remove(); // Remove previous video element if it exists
 		video = createVideo(url, () => {
 			video.size(width, height);
+			video.parent('canvas-media');
 			video.loop();
-			video.hide();
 			redraw();
 		});
 	}
