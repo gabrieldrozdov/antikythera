@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dither</title>
+	<link rel="icon" type="png" href="favicon.png">
+	<link rel="stylesheet" href="style.css">
+	<script src="gif.js"></script>
+</head>
+
+<body>
+	<div class="overlay" data-active="0">
+		<span>Recording in progress</span>
+		<span>Rendering <span id="overlay-total">0</span> frames</span>
+	</div>
+
+	<div class="controls" data-active="1">
+		<div class="control">
+			<div class=input-container-buttons>
+				<a href="../" class="input-label">← Home</a>
+				<button class="input-button" onclick="toggleControls();">Minimize</button>
+			</div>
+		</div>
+
+		<div class="control">
+			<div class="input-label-container">
+				<h1 class="input-label"><a href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering"
+						target="_blank">Floyd-Steinberg</a></h1>
+			</div>
+		</div>
+
+		<div class="controls-main">
+			<div class="control">
+				<input type="file" id="file" accept="image/*,video/*">
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Scale</label>
+					<div class="input-value" id="scale-value">90</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="100" value="90" oninput="updateScale(this.value)"
+						class="input-range">
+					<div class="input-cap">100</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Threshold Red</label>
+					<div class="input-value" id="threshold-red-value">100</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="200" value="100" oninput="updateThresholdRed(this.value)"
+						class="input-range">
+					<div class="input-cap">200</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Threshold Green</label>
+					<div class="input-value" id="threshold-green-value">100</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="200" value="100" oninput="updateThresholdGreen(this.value)"
+						class="input-range">
+					<div class="input-cap">200</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Threshold Blue</label>
+					<div class="input-value" id="threshold-blue-value">100</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="200" value="100" oninput="updateThresholdBlue(this.value)"
+						class="input-range">
+					<div class="input-cap">200</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Brightness</label>
+					<div class="input-value" id="brightness-value">200</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">10</div>
+					<input type="range" min="1" max="1000" value="200" oninput="updateBrightness(this.value)"
+						class="input-range">
+					<div class="input-cap">1000</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Crossover</label>
+					<div class="input-value" id="crossover-value">128</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">2</div>
+					<input type="range" min="2" max="256" value="128" oninput="updateCrossover(this.value)"
+						class="input-range">
+					<div class="input-cap">256</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Colors</label>
+				</div>
+				<div class=input-container-buttons>
+					<input type="color" value="#bdafa3" class="input-color" oninput="updateColor1(this.value)"
+						id="color1">
+					<input type="color" value="#1a1a1a" class="input-color" oninput="updateColor2(this.value)"
+						id="color2">
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="randomizeColors();" id="randomize-colors">Randomize</button>
+					<button class="input-button" id="swap-colors" onclick="swapColors();">Swap</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Opacity</label>
+					<div class="input-value" id="opacity-value">100</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">0</div>
+					<input type="range" min="0" max="100" value="100" oninput="updateOpacity(this.value)"
+						class="input-range">
+					<div class="input-cap">100</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Blend Mode</label>
+					<div class="input-value" id="blend-mode-value">normal</div>
+				</div>
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="updateBlendMode('normal');">Normal</button>
+					<button class="input-button" onclick="updateBlendMode('multiply');">Multiply</button>
+					<button class="input-button" onclick="updateBlendMode('screen');">Screen</button>
+					<button class="input-button" onclick="updateBlendMode('overlay');">Overlay</button>
+					<button class="input-button" onclick="updateBlendMode('darken');">Darken</button>
+					<button class="input-button" onclick="updateBlendMode('lighten');">Lighten</button>
+					<button class="input-button" onclick="updateBlendMode('color-dodge');">Color Dodge</button>
+					<button class="input-button" onclick="updateBlendMode('color-burn');">Color Burn</button>
+					<button class="input-button" onclick="updateBlendMode('hard-light');">Hard Light</button>
+					<button class="input-button" onclick="updateBlendMode('soft-light');">Soft Light</button>
+					<button class="input-button" onclick="updateBlendMode('difference');">Difference</button>
+					<button class="input-button" onclick="updateBlendMode('exclusion');">Exclusion</button>
+					<button class="input-button" onclick="updateBlendMode('hue');">Hue</button>
+					<button class="input-button" onclick="updateBlendMode('saturation');">Saturation</button>
+					<button class="input-button" onclick="updateBlendMode('color');">Color</button>
+					<button class="input-button" onclick="updateBlendMode('luminosity');">Luminosity</button>
+					<button class="input-button" onclick="updateBlendMode('plus-darker');">Plus Darker</button>
+					<button class="input-button" onclick="updateBlendMode('plus-lighter');">Plus Lighter</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Recording Length (seconds)</label>
+					<div class="input-value" id="recording-length-value">5</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="1" max="30" value="5" oninput="updateRecordingLength(this.value)"
+						class="input-range">
+					<div class="input-cap">30</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class="input-label-container">
+					<label class="input-label">Frame Rate (fps)</label>
+					<div class="input-value" id="frame-rate-value">45</div>
+				</div>
+				<div class="input-container">
+					<div class="input-cap">1</div>
+					<input type="range" min="5" max="60" value="45" oninput="updateFrameRate(this.value)"
+						class="input-range">
+					<div class="input-cap">60</div>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="makeRecording();" id="record-gif">Record GIF</button>
+				</div>
+			</div>
+
+			<div class="control">
+				<div class=input-container-buttons>
+					<button class="input-button" onclick="saveCanvas();">Download Image</button>
+					<button class="input-button" onclick="pausePlay();">Pause/Play</button>
+					<button class="input-button" onclick="toggleDither();">Toggle Dither</button>
+					<button class="input-button" onclick="toggleDuotone();">Toggle Duotone</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<main id="canvas-container" onclick="showControls();" data-media="video">
+		<video id="video" autoplay loop muted playsinline disableremoteplayback>
+			<source src="blacksmokervideo.mp4">
+		</video>
+		<img id="image" src="genart-image-compressed.jpg">
+		<canvas id="canvas"></canvas>
+	</main>
+
+	<script src="script.js"></script>
+</body>
+
+</html>
