@@ -187,6 +187,7 @@ document.getElementById('file').addEventListener('change', (event) => {
 		fileLoaded = false
 		video.querySelector('source').src = url;
 		video.load();
+		videoPaused = false;
 		videoActive = true;
 		canvasContainer.dataset.media = 'video';
 	}
@@ -194,14 +195,14 @@ document.getElementById('file').addEventListener('change', (event) => {
 
 // Pause/play toggle
 let videoActive = true;
+let videoPaused = false;
 function pausePlay() {
-	if (videoActive) {
+	if (!videoPaused) {
 		video.pause();
-		videoActive = false;
+		videoPaused = true;
 	} else {
 		video.play();
-		videoActive = true;
-		requestAnimationFrame(processFrame);
+		videoPaused = false;
 	}
 }
 
